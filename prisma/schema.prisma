@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+
+model RosterUpdates {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+}
+
+model RosterUpdateDetails {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  rosterUpdatesId String @db.ObjectId
+}
+
+model Item {
+  id                          String  @id @default(auto()) @map("_id") @db.ObjectId
+  uuid                        String  @unique
+  name                        String
+  rarity                      String
+  team                        String
+  ovr                         Int?
+  age                         Int?
+  height                      String?
+  weight                      String?
+  born                        String?
+  display_position            String?
+  display_secondary_positions String?
+  series_year                 Int?
+  baked_img                   String?
+  img                         String?
+
+  batHand         String?
+  throwHand       String?
+  isHitter        Boolean?
+  series          String?
+  displayPosition String?
+
+  contactLeft           Int?
+  contactRight          Int?
+  powerLeft             Int?
+  powerRight            Int?
+  plateVision           Int?
+  plateDiscipline       Int?
+  battingClutch         Int?
+  buntingAbility        Int?
+  dragBuntingAbility    Int?
+  hittingDurability     Int?
+  fieldingAbility       Int?
+  armStrength           Int?
+  armAccuracy           Int?
+  reactionTime          Int?
+  blocking              Int?
+  speed                 Int?
+  baserunningAbility    Int?
+  baserunningAggression Int?
+  // Define a one-to-one relationship with PitcherStats
+  pitcherStats          PitcherStats?
+
+  quirks ItemQuirk[]
+}
+
+model PitcherStats {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  uuid           String @unique
+  stamina        Int?
+  pitchingClutch Int?
+  hitsPerBf      Int?
+  kPerBf         Int?
+  bbPerBf        Int?
+  hrPerBf        Int?
+  pitchVelocity  Int?
+  pitchControl   Int?
+  pitchMovement  Int?
+
+  // Define a back relation to Item
+  item    Item?   @relation(fields: [itemId], references: [id])
+  itemId  String? @unique @db.ObjectId
+  pitches Pitch[]
+}
+
+model Pitch {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  speed          Int
+  control        Int
+  movement       Int
+  pitcherStatsId String       @db.ObjectId
+  pitcherStats   PitcherStats @relation(fields: [pitcherStatsId], references: [id], onDelete: Cascade)
+}
+
+model Quirk {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  img         String
+  items       ItemQuirk[]
+}
+
+// Many-to-Many join table between Item and Quirk
+model ItemQuirk {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId // Unique ID for MongoDB
+  itemId  String @db.ObjectId
+  quirkId String @db.ObjectId
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quirk   Quirk  @relation(fields: [quirkId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, quirkId]) // Unique constraint to prevent duplicate pairs
+}
