@@ -18,18 +18,30 @@ generator client {
 // prisma/schema.prisma
 
 model RosterUpdates {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  updateId Int    @unique
+  name     String
 }
 
 model RosterUpdateDetails {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  rosterUpdatesId String @db.ObjectId
+  id               String                    @id @default(auto()) @map("_id") @db.ObjectId
+  rosterUpdatesId  String                    @db.ObjectId
+  attributeChanges RosterUpdateDetailsItem[]
+}
+
+model RosterUpdateDetailsItem {
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  rosterUpdateDetailsId String              @db.ObjectId
+  itemId                String              @db.ObjectId
+  rosterUpdateDetails   RosterUpdateDetails @relation(fields: [rosterUpdateDetailsId], references: [id], onDelete: Cascade)
+  item                  Item                @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([rosterUpdateDetailsId, itemId])
 }
 
 model Item {
-  id                          String  @id @default(auto()) @map("_id") @db.ObjectId
-  uuid                        String  @unique
+  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
+  uuid                        String   @unique
   name                        String
   rarity                      String
   team                        String
@@ -43,12 +55,10 @@ model Item {
   series_year                 Int?
   baked_img                   String?
   img                         String?
-
-  batHand         String?
-  throwHand       String?
-  isHitter        Boolean?
-  series          String?
-  displayPosition String?
+  batHand                     String?
+  throwHand                   String?
+  isHitter                    Boolean?
+  series                      String?
 
   contactLeft           Int?
   contactRight          Int?
@@ -68,56 +78,55 @@ model Item {
   speed                 Int?
   baserunningAbility    Int?
   baserunningAggression Int?
+  stamina               Int?
+  pitchingClutch        Int?
+  hitsPerBf             Int?
+  kPerBf                Int?
+  bbPerBf               Int?
+  hrPerBf               Int?
+  pitchVelocity         Int?
+  pitchControl          Int?
+  pitchMovement         Int?
   // Define a one-to-one relationship with PitcherStats
-  pitcherStats          PitcherStats?
 
-  quirks ItemQuirk[]
-}
-
-model PitcherStats {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  uuid           String @unique
-  stamina        Int?
-  pitchingClutch Int?
-  hitsPerBf      Int?
-  kPerBf         Int?
-  bbPerBf        Int?
-  hrPerBf        Int?
-  pitchVelocity  Int?
-  pitchControl   Int?
-  pitchMovement  Int?
-
-  // Define a back relation to Item
-  item    Item?   @relation(fields: [itemId], references: [id])
-  itemId  String? @unique @db.ObjectId
-  pitches Pitch[]
+  itemQuirks               ItemQuirk[]
+  itemPitches              ItemPitch[]
+  rosterUpdateDetailsItems RosterUpdateDetailsItem[]
 }
 
 model Pitch {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  speed          Int
-  control        Int
-  movement       Int
-  pitcherStatsId String       @db.ObjectId
-  pitcherStats   PitcherStats @relation(fields: [pitcherStatsId], references: [id], onDelete: Cascade)
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  speed     Int
+  control   Int
+  movement  Int
+  ItemPitch ItemPitch[]
 }
 
 model Quirk {
   id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
+  name        String      @unique
   description String
   img         String
-  items       ItemQuirk[]
+  items       ItemQuirk[] // Indirect many-to-many relationship with Item through ItemQuirk
 }
 
-// Many-to-Many join table between Item and Quirk
 model ItemQuirk {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId // Unique ID for MongoDB
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
   itemId  String @db.ObjectId
   quirkId String @db.ObjectId
   item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
   quirk   Quirk  @relation(fields: [quirkId], references: [id], onDelete: Cascade)
 
   @@unique([itemId, quirkId]) // Unique constraint to prevent duplicate pairs
+}
+
+model ItemPitch {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  itemId  String @db.ObjectId
+  pitchId String @db.ObjectId
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  pitch   Pitch  @relation(fields: [pitchId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, pitchId])
 }
