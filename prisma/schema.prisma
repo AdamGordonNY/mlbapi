@@ -130,3 +130,17 @@ model ItemPitch {
 
   @@unique([itemId, pitchId])
 }
+
+enum Positions {
+  Catcher
+  FirstBase
+  SecondBase
+  ThirdBase
+  Shortstop
+  LeftField
+  CenterField
+  RightField
+  StartingPitcher
+  ReliefPitcher
+  Closer
+}

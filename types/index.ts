@@ -54,7 +54,17 @@ export interface ApiPlayer {
   }[];
   quirks?: { name: string; description: string; img: string }[];
 }
-
+export interface ItemOverview {
+  name: string;
+  rarity: string;
+  ovr: number;
+  team: string;
+  age: number;
+  batHand: string;
+  throwHand: string;
+  display_position: string;
+  display_secondary_positions: string;
+}
 export interface ItemObject {
   uuid: string;
   name: string;
