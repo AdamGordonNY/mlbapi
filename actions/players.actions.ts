@@ -1,8 +1,8 @@
 import prisma from "@/lib/prismaClient";
 import { ItemObject, ItemOverview } from "@/types";
 export const getPlayers = async ({
-  page = 1,
-  pageSize = 25,
+  page,
+  pageSize,
 }: {
   page: number;
   pageSize: number;
@@ -11,6 +11,7 @@ export const getPlayers = async ({
     const totalPlayers = await prisma.item.count();
     const totalPages = Math.ceil(totalPlayers / pageSize);
     const skip = (page - 1) * pageSize;
+
     const players = await prisma.item.findMany({
       select: {
         img: true,
@@ -25,14 +26,13 @@ export const getPlayers = async ({
         display_secondary_positions: true,
       },
       skip,
-      take: pageSize || 25,
+      take: pageSize,
     });
 
-    const newTotal = Math.ceil(players.length / pageSize);
-
-    return { players, totalPages, currentPage: page, totalPlayers };
+    return { players, totalPages };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw new Error("Failed to fetch players");
   }
 };
 export const getPlayersByPosition = async (position: string) => {

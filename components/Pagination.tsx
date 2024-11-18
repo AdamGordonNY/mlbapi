@@ -1,43 +1,52 @@
 "use client";
-import React from "react";
-import { Button } from "./ui/button";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-interface PaginationProps {
+const Pagination = ({
+  totalPages,
+  currentPage,
+  onPageChange,
+}: {
   totalPages: number;
   currentPage: number;
-}
+  onPageChange: (page: number) => void;
+}) => {
+  const handlePreviousClick = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
 
-const Pagination = ({ totalPages, currentPage }: PaginationProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const handlePageChange = async (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", newPage.toString());
-    router.push(`${window.location.pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleNextClick = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
   };
 
   return (
-    <div className="flex h-10 items-center gap-x-8">
-      <Button
-        className="w-[100px] gap-x-2 bg-white-100 px-3.5 py-2.5 text-dark-900 dark:bg-dark-800 dark:text-white-100"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+    <div className="pagination">
+      {/* Previous Button */}
+      <button
+        className={`prev-button ${currentPage === 1 ? "disabled" : ""}`}
+        onClick={handlePreviousClick}
+        disabled={currentPage === 1} // Disable if on the first page
       >
-        Prev
-      </Button>
-      <div className="dark:text-white-100">{`${currentPage} / ${totalPages}`}</div>
-      <Button
-        className="w-[100px] gap-x-2 bg-white-100 px-3.5 py-2.5 text-dark-900 dark:bg-dark-800 dark:text-white-100"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        Previous
+      </button>
+
+      {/* Current Page Display */}
+      <span className="current-page">
+        Page {currentPage} of {totalPages}
+      </span>
+
+      {/* Next Button */}
+      <button
+        className={`next-button ${
+          currentPage === totalPages ? "disabled" : ""
+        }`}
+        onClick={handleNextClick}
+        disabled={currentPage === totalPages} // Disable if on the last page
       >
         Next
-      </Button>
+      </button>
     </div>
   );
 };
