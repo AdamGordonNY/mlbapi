@@ -1,20 +1,15 @@
 import prisma from "@/lib/prismaClient";
 import { ItemObject, ItemOverview } from "@/types";
 export const getPlayers = async ({
-  page,
-  pageSize,
-  filter,
+  page = 1,
+  pageSize = 25,
 }: {
   page: number;
   pageSize: number;
-  filter: string;
 }) => {
-  if (!filter) {
-    filter = "alphabetical";
-  }
   try {
     const totalPlayers = await prisma.item.count();
-    const totalPages = Math.ceil(totalPlayers * pageSize);
+    const totalPages = Math.ceil(totalPlayers / pageSize);
     const skip = (page - 1) * pageSize;
     const players = await prisma.item.findMany({
       select: {
@@ -34,7 +29,8 @@ export const getPlayers = async ({
     });
 
     const newTotal = Math.ceil(players.length / pageSize);
-    return { players, totalPages: newTotal };
+
+    return { players, totalPages, currentPage: page, totalPlayers };
   } catch (error) {
     console.log(error);
   }

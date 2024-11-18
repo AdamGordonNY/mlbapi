@@ -2,7 +2,7 @@ import { getPlayers, removeDuplicates } from "@/actions/players.actions";
 import { columns } from "@/components/items/columns";
 import { DataTable } from "@/components/items/datatable";
 import Pagination from "@/components/Pagination";
-import PlayerTable from "@/components/PlayerTable";
+
 import { ItemObject, ItemOverview } from "@/types";
 import { Suspense } from "react";
 
