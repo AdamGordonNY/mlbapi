@@ -13,18 +13,6 @@ export const getPlayers = async ({
     const skip = (page - 1) * pageSize;
 
     const players = await prisma.item.findMany({
-      select: {
-        img: true,
-        name: true,
-        rarity: true,
-        ovr: true,
-        team: true,
-        age: true,
-        batHand: true,
-        throwHand: true,
-        display_position: true,
-        display_secondary_positions: true,
-      },
       skip,
       take: pageSize,
     });

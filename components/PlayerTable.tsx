@@ -33,7 +33,7 @@ const PlayerTable = ({
   const fetchPlayers = async (page: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/players?page=${page}&pageSize=20`);
+      const response = await fetch(`/api/players?page=${page}&pageSize=25`);
       if (!response.ok) {
         throw new Error(
           `API Error: ${response.status} - ${response.statusText}`

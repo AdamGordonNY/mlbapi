@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: "mlb24.theshow.com", pathname: "/**", protocol: "https" },
+      { hostname: "cards.theshow.com", pathname: "/**", protocol: "https" },
     ],
   },
 };

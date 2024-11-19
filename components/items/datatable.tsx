@@ -10,6 +10,7 @@ import {
   ColumnFiltersState,
   useReactTable,
   VisibilityState,
+  PaginationState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -22,24 +23,30 @@ import {
 
 import React from "react";
 import { Input } from "../ui/input";
+import { Player } from "@/types";
 
-interface ItemTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface ItemTableProps<Player, TValue> {
+  columns: ColumnDef<Player, TValue>[];
+  data: Player[];
 }
-export function DataTable<TData, TValue>({
+export function DataTable<Player, TValue>({
   columns,
   data,
-}: ItemTableProps<TData, TValue>) {
+}: ItemTableProps<Player, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  });
   const table = useReactTable({
     data,
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -47,6 +54,16 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: () => {},
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 25,
+      },
+      sorting,
+      columnFilters,
+      columnVisibility,
+    },
     state: {
       sorting,
       columnFilters,

@@ -5,7 +5,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 25;
-
+  console.log(req.json());
   try {
     const { players, totalPages } = await getPlayers({ page, pageSize });
     console.log("Players fetched:", players.length);
