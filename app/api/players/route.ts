@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { getPlayers } from "@/actions/players.actions";
 
@@ -11,9 +12,9 @@ export async function GET(req: Request) {
     console.log("Players fetched:", players.length);
     console.log({ players });
     return NextResponse.json({ players, totalPages });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to fetch players" },
+      { error: "Failed to fetch players", message: error.message },
       { status: 500 }
     );
   }

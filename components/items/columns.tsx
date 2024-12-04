@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { ItemOverview, Player } from "@/types";
-import { ArrowUpDown } from "lucide-react";
+import { Player } from "@/types";
 export const columnHelper = createColumnHelper<Player>();
 export const columns: ColumnDef<Player>[] = [
   {
@@ -34,6 +33,7 @@ export const columns: ColumnDef<Player>[] = [
   {
     accessorKey: "display_position",
     header: "Primary Position",
+    enableSorting: true,
   },
   {
     accessorKey: "display_secondary_positions",

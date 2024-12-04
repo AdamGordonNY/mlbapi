@@ -5,17 +5,18 @@ import { DataTable } from "@/components/items/datatable";
 import { columns } from "@/components/items/columns";
 import Pagination from "@/components/Pagination";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Player } from "@/types";
 
 const PlayerTable = ({
   initialPlayers,
   totalPages: initialTotalPages,
   initialPage,
 }: {
-  initialPlayers: any[];
+  initialPlayers: Player[];
   totalPages: number;
   initialPage: number;
 }) => {
-  const [players, setPlayers] = useState(initialPlayers);
+  const [players, setPlayers] = useState<Player[]>(initialPlayers);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
